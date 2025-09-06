@@ -8,9 +8,12 @@
  * then every second character until the end of the string,
  * followed by a new line.
  */
-void puts2(char *str)
+void puts2(char	*str)
 {
-	int i = 0;
+	int i =0;
+
+	str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
+	puts2(str);
 
 	if (!str)
 		return;
