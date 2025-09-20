@@ -11,10 +11,10 @@ int _strlen(char *s)
 {
 	int i = 0;
 
-	if (s == NULL)
+	if (!s)
 		return (0);
 
-	while (s[i] != '\0')
+	while (s[i])
 		i++;
 	return (i);
 }
@@ -38,21 +38,21 @@ char *_strcpy(char *dest, char *src)
 
 /**
  * new_dog - creates a new dog (allocates memory)
- * @name: name of the dog
- * @age: age of the dog
- * @owner: owner of the dog
+ * @name: dog's name
+ * @age: dog's age
+ * @owner: dog's owner
  *
- * Return: pointer to the new dog, or NULL on failure
+ * Return: pointer to new dog, NULL on failure
  */
 dog_t *new_dog(char *name, float age, char *owner)
 {
 	dog_t *dog;
-	char *name_copy = NULL;
-	char *owner_copy = NULL;
+	char *name_copy;
+	char *owner_copy;
 	int len;
 
 	dog = malloc(sizeof(dog_t));
-	if (dog == NULL)
+	if (!dog)
 		return (NULL);
 
 	len = _strlen(name);
@@ -71,4 +71,23 @@ dog_t *new_dog(char *name, float age, char *owner)
 		dog->name = NULL;
 
 	dog->age = age;
+
+	len = _strlen(owner);
+	if (len > 0)
+	{
+		owner_copy = malloc(len + 1);
+		if (!owner_copy)
+		{
+			free(dog->name);
+			free(dog);
+			return (NULL);
+		}
+		_strcpy(owner_copy, owner);
+		dog->owner = owner_copy;
+	}
+	else
+		dog->owner = NULL;
+
+	return (dog);
+}
 
