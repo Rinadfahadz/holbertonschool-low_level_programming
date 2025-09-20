@@ -13,28 +13,34 @@
 dog_t *new_dog(char *name, float age, char *owner)
 {
     dog_t *d;
-    char *name_copy, *owner_copy;
+    unsigned int i, len_name, len_owner;
 
-    /* allocate memory for struct dog */
     d = malloc(sizeof(dog_t));
     if (d == NULL)
         return (NULL);
 
-    /* allocate memory for name and owner copies */
-    name_copy = strdup(name);
-    owner_copy = strdup(owner);
-    if (name_copy == NULL || owner_copy == NULL)
+    len_name = strlen(name);
+    len_owner = strlen(owner);
+
+    d->name = malloc(len_name + 1);
+    d->owner = malloc(len_owner + 1);
+    if (d->name == NULL || d->owner == NULL)
     {
-        free(name_copy);
-        free(owner_copy);
+        free(d->name);
+        free(d->owner);
         free(d);
         return (NULL);
     }
 
-    /* assign values */
-    d->name = name_copy;
+    for (i = 0; i < len_name; i++)
+        d->name[i] = name[i];
+    d->name[len_name] = '\0';
+
+    for (i = 0; i < len_owner; i++)
+        d->owner[i] = owner[i];
+    d->owner[len_owner] = '\0';
+
     d->age = age;
-    d->owner = owner_copy;
 
     return (d);
 }
