@@ -13,7 +13,6 @@ int _strlen(char *s)
 
 	if (!s)
 		return (0);
-
 	while (s[i])
 		i++;
 	return (i);
@@ -47,47 +46,28 @@ char *_strcpy(char *dest, char *src)
 dog_t *new_dog(char *name, float age, char *owner)
 {
 	dog_t *dog;
-	char *name_copy;
-	char *owner_copy;
-	int len;
 
 	dog = malloc(sizeof(dog_t));
 	if (!dog)
 		return (NULL);
 
-	len = _strlen(name);
-	if (len > 0)
+	dog->name = (name) ? malloc(_strlen(name) + 1) : NULL;
+	dog->owner = (owner) ? malloc(_strlen(owner) + 1) : NULL;
+
+	if ((name && !dog->name) || (owner && !dog->owner))
 	{
-		name_copy = malloc(len + 1);
-		if (!name_copy)
-		{
-			free(dog);
-			return (NULL);
-		}
-		_strcpy(name_copy, name);
-		dog->name = name_copy;
+		free(dog->name);
+		free(dog->owner);
+		free(dog);
+		return (NULL);
 	}
-	else
-		dog->name = NULL;
+
+	if (dog->name)
+		_strcpy(dog->name, name);
+	if (dog->owner)
+		_strcpy(dog->owner, owner);
 
 	dog->age = age;
 
-	len = _strlen(owner);
-	if (len > 0)
-	{
-		owner_copy = malloc(len + 1);
-		if (!owner_copy)
-		{
-			free(dog->name);
-			free(dog);
-			return (NULL);
-		}
-		_strcpy(owner_copy, owner);
-		dog->owner = owner_copy;
-	}
-	else
-		dog->owner = NULL;
-
 	return (dog);
 }
-
