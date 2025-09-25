@@ -26,9 +26,8 @@ void print_all(const char * const format, ...)
 		{
 			str = va_arg(args, char *);
 			if (str == NULL)
-				printf("%s(nil)", sep);
-			else
-				printf("%s%s", sep, str);
+				str = "(nil)";
+			printf("%s%s", sep, str);
 		}
 		sep = ", ";
 		i++;
