@@ -4,17 +4,20 @@
  * check_write_error - check write errors
  * @w: write return value
  * @r: read return value
- * @filename: file to write
- * @fd_from: source fd
- * @fd_to: dest fd
+ * @filename: destination file
+ * @fd_from: source file descriptor
+ * @fd_to: destination file descriptor
  */
-void check_write_error(int w, int r, char *filename, int fd_from, int fd_to)
+void check_write_error(ssize_t w, ssize_t r, char *filename,
+		       int fd_from, int fd_to)
 {
 	if (w == -1 || w != r)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", filename);
-		close(fd_from);
-		close(fd_to);
+		if (close(fd_from) == -1)
+			dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_from);
+		if (close(fd_to) == -1)
+			dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_to);
 		exit(99);
 	}
 }
@@ -52,7 +55,7 @@ void open_files(char *file_from, char *file_to, int *fd_from, int *fd_to)
 	if (*fd_to == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file_to);
-		close(*fd_from);
+		check_close_error(*fd_from);
 		exit(99);
 	}
 }
@@ -66,21 +69,21 @@ void open_files(char *file_from, char *file_to, int *fd_from, int *fd_to)
  */
 void copy_data(int fd_from, int fd_to, char *file_from, char *file_to)
 {
-	int r, w;
+	ssize_t r, w;
 	char buffer[1024];
 
-	while ((r = read(fd_from, buffer, 1024)) != 0)
+	while ((r = read(fd_from, buffer, 1024)) > 0)
 	{
-		if (r == -1)
-		{
-			dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
-			check_close_error(fd_from);
-			check_close_error(fd_to);
-			exit(98);
-		}
-
 		w = write(fd_to, buffer, r);
 		check_write_error(w, r, file_to, fd_from, fd_to);
+	}
+
+	if (r == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
+		check_close_error(fd_from);
+		check_close_error(fd_to);
+		exit(98);
 	}
 }
 
