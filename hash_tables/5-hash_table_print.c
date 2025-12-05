@@ -1,6 +1,6 @@
 #include "hash_tables.h"
 #include <stdio.h>
-
+ 
 /**
  * hash_table_print - print all key/value pairs of a hash table
  * @ht: pointer to the hash table
